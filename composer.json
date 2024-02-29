@@ -6,7 +6,6 @@
         "laravel",
         "json",
         "api",
-        "json:api",
         "json-api",
         "errors",
         "error-handling"
