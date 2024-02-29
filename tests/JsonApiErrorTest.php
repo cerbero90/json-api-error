@@ -1,26 +1,27 @@
 <?php
 
-namespace Cerbero\:package_ns;
+declare(strict_types=1);
 
-use Cerbero\:package_ns\Providers\:package_nsServiceProvider;
+namespace Cerbero\JsonApiError;
+
+use Cerbero\JsonApiError\Providers\JsonApiErrorServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 /**
  * The package test suite.
- *
  */
-class :package_nsTest extends TestCase
+final class JsonApiErrorTest extends TestCase
 {
     /**
      * Retrieve the package providers.
      *
      * @param \Illuminate\Foundation\Application $app
-     * @return array
+     * @return class-string[]
      */
     protected function getPackageProviders($app)
     {
         return [
-            :package_nsServiceProvider::class,
+            JsonApiErrorServiceProvider::class,
         ];
     }
 }

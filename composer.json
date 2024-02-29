@@ -1,11 +1,17 @@
 {
-    "name": "cerbero/:package_name",
+    "name": "cerbero/json-api-error",
     "type": "library",
-    "description": ":package_description",
+    "description": "Laravel package to standardize API errors in compliance with the JSON:API spec.",
     "keywords": [
-        "laravel"
+        "laravel",
+        "json",
+        "api",
+        "json:api",
+        "json-api",
+        "errors",
+        "error-handling"
     ],
-    "homepage": "https://github.com/cerbero90/:package_name",
+    "homepage": "https://github.com/cerbero90/json-api-error",
     "license": "MIT",
     "authors": [{
         "name": "Andrea Marco Sartori",
@@ -27,12 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Cerbero\\:package_ns\\": "src"
+            "Cerbero\\JsonApiError\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Cerbero\\:package_ns\\": "tests"
+            "Cerbero\\JsonApiError\\": "tests"
         }
     },
     "scripts": {
@@ -46,7 +52,7 @@
         },
         "laravel": {
             "providers": [
-                "Cerbero\\:package_ns\\Providers\\:package_nsServiceProvider"
+                "Cerbero\\JsonApiError\\Providers\\JsonApiErrorServiceProvider"
             ]
         }
     },
