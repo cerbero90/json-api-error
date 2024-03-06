@@ -1,9 +1,8 @@
-# ⛔️ JSON:API Error
+# 💥 JSON:API Error
 
 [![Author][ico-author]][link-author]
 [![PHP Version][ico-php]][link-php]
 [![Laravel Version][ico-laravel]][link-laravel]
-[![Octane Compatibility][ico-octane]][link-octane]
 [![Build Status][ico-actions]][link-actions]
 [![Coverage Status][ico-scrutinizer]][link-scrutinizer]
 [![Quality Score][ico-code-quality]][link-code-quality]
@@ -13,7 +12,40 @@
 [![PER][ico-per]][link-per]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Laravel package to standardize API errors in compliance with the [JSON:API spec](https://jsonapi.org/examples/#error-objects).
+```json
+{
+  "errors": [
+    {
+      "status": "422",
+      "title": "Unprocessable Content",
+      "detail": "The name field must be a string.",
+      "source": {
+        "pointer": "/name"
+      }
+    },
+    {
+      "status": "422",
+      "title": "Unprocessable Content",
+      "detail": "The name field must be at least 2 characters.",
+      "source": {
+        "pointer": "/name"
+      }
+    }
+  ]
+}
+```
+
+Laravel package to standardize API error responses in compliance with the [JSON:API spec](https://jsonapi.org/examples/#error-objects).
+
+Benefits:
+- **consistency**: ensure uniform API error responses across all Laravel projects, adhering to a widely used standard
+- **automation**: handle Laravel-specific and common HTTP exceptions automatically
+- **simplicity**: focus solely on error responses without the need to implement the full JSON:API spec
+- **zero configuration**: install the package with no additional configuration required
+- **customization**: optionally register custom handlers, map throwables to HTTP statuses, or merge default data
+- **localization**: translate JSON:API errors into any language
+- **testability**: test error responses using the built-in testing tools
+- **debugging**: inspect the original message and trace when an unexpected error occurs
 
 
 ## 📦 Install
@@ -59,7 +91,6 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [ico-author]: https://img.shields.io/static/v1?label=author&message=cerbero90&color=50ABF1&logo=twitter&style=flat-square
 [ico-php]: https://img.shields.io/packagist/php-v/cerbero/json-api-error?color=%234F5B93&logo=php&style=flat-square
 [ico-laravel]: https://img.shields.io/static/v1?label=laravel&message=%E2%89%A55.5&color=ff2d20&logo=laravel&style=flat-square
-[ico-octane]: https://img.shields.io/static/v1?label=octane&message=compatible&color=ff2d20&logo=laravel&style=flat-square
 [ico-version]: https://img.shields.io/packagist/v/cerbero/json-api-error.svg?label=version&style=flat-square
 [ico-actions]: https://img.shields.io/github/actions/workflow/status/cerbero90/json-api-error/build.yml?branch=master&style=flat-square&logo=github
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
@@ -72,7 +103,6 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [link-author]: https://twitter.com/cerbero90
 [link-php]: https://www.php.net
 [link-laravel]: https://laravel.com
-[link-octane]: https://github.com/laravel/octane
 [link-packagist]: https://packagist.org/packages/cerbero/json-api-error
 [link-actions]: https://github.com/cerbero90/json-api-error/actions?query=workflow%3Abuild
 [link-per]: https://www.php-fig.org/per/coding-style/
