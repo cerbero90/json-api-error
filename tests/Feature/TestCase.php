@@ -27,8 +27,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function defineRoutes($router)
     {
         $router->get('errors-aware', fn () => JsonApiError::raw('ciao')->throw());
-        $router->get('validation', fn () => validator(['name' => 3], ['name' => 'string|min:2'])->validate());
-        // $router->get('validation', fn () => validator(['foo' => [1,2,3]], ['foo.*' => 'string'])->validate());
+        $router->get('validation', fn () => validator(['foo' => [1,2,3]], ['foo.*' => 'string'])->validate());
         $router->get('http-exception', fn () => throw new PostTooLargeException());
         $router->get('authorization', fn () => throw new AuthorizationException());
         $router->get('authentication', fn () => throw new AuthenticationException());
