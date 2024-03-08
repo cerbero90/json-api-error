@@ -52,7 +52,9 @@ final class TestResponseMixin
                 }));
 
             if (array_is_list($expected)) {
-                return $this->assertJsonPathCanonicalizing('errors.*.detail', $expected);
+                Assert::assertEqualsCanonicalizing($expected, $this->json('errors.*.detail'));
+
+                return $this;
             }
 
             $actual = $this->collect('errors')->pluck('detail', 'source.pointer')->all();
@@ -67,6 +69,8 @@ final class TestResponseMixin
             }
 
             Assert::assertEmpty($actual, 'Other unexpected validation errors occurred.');
+
+            return $this;
         };
     }
 
