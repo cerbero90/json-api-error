@@ -66,21 +66,22 @@ final class JsonApiError
      */
     public function __construct(JsonApiErrorData ...$errors)
     {
-        throw_if(empty($errors), NoErrorsException::class);
-
-        $this->errors = self::$merge === null ? $errors : array_map(function (JsonApiErrorData $error) {
-            return $error->merge((self::$merge)());
-        }, $errors);
+        $this->errors = match (true) {
+            empty($errors) => throw new NoErrorsException(),
+            is_null($merge = self::$merge) => $errors,
+            default => array_map(fn(JsonApiErrorData $error) => $error->merge($merge()), $errors),
+        };
     }
 
     /**
      * Define a custom handler to turn the given throwable into a JSON:API error.
      *
-     * @param Closure(Throwable): JsonApiErrorData|JsonApiErrorData[] $handler
+     * @param Closure(Throwable): (JsonApiErrorData|JsonApiErrorData[]) $handler
      */
     public static function handle(Closure $handler): void
     {
         $parameters = (new ReflectionFunction($handler))->getParameters();
+        /** @var class-string[] */
         $types = empty($parameters) ? [null] : (Reflector::getParameterClassNames($parameters[0]) ?: [null]);
 
         foreach ($types as $type) {
@@ -92,6 +93,8 @@ final class JsonApiError
 
     /**
      * Map the given throwable to the provided HTTP status.
+     *
+     * @param class-string $throwable
      */
     public static function mapToStatus(string $throwable, int $status): void
     {
@@ -101,7 +104,7 @@ final class JsonApiError
     /**
      * Define custom data to merge with all JSON:API errors.
      *
-     * @var Closure(): JsonApiErrorData
+     * @param Closure(): JsonApiErrorData $callback
      */
     public static function merge(Closure $callback): void
     {
@@ -121,6 +124,7 @@ final class JsonApiError
      */
     public static function from(Throwable $e): self
     {
+        /** @var ?callable */
         $handler = Arr::first(self::$handlersMap, fn(callable $h, string $class) => is_a($e, $class));
 
         return match (true) {

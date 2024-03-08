@@ -26,7 +26,7 @@ final class TestResponseMixin
             /**
              * @var TestResponse $this
              */
-            return $this
+            return $this // @phpstan-ignore-line
                 ->assertJsonApiErrorStructure()
                 ->assertJsonPath('errors.0.status', (string) $status)
                 ->assertJsonPath('errors.0.title', __("json-api-error::statuses.{$status}.title"))
@@ -45,7 +45,7 @@ final class TestResponseMixin
             /**
              * @var TestResponse $this
              */
-            $this
+            $this // @phpstan-ignore-line
                 ->assertJsonApiErrorStructure()
                 ->assertJsonPath('errors', fn(array $errors) => collect($errors)->every(function (array $error) {
                     return $error['status'] === '422' && $error['title'] === __('json-api-error::statuses.422.title');
@@ -81,7 +81,7 @@ final class TestResponseMixin
             /**
              * @var TestResponse $this
              */
-            return $this
+            return $this // @phpstan-ignore-line
                 ->assertJsonApiErrorStructure()
                 ->assertJsonPath('errors.0.status', (string) $status)
                 ->assertJsonPath('errors.0.title', __("json-api-error::statuses.{$status}.title"))

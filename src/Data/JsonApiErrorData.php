@@ -11,6 +11,8 @@ use Throwable;
 
 /**
  * The JSON:API error data.
+ *
+ * @implements Arrayable<string, mixed>
  */
 final class JsonApiErrorData implements Arrayable
 {
