@@ -38,7 +38,7 @@
 Laravel package to standardize API error responses in compliance with the [JSON:API spec](https://jsonapi.org/examples/#error-objects).
 
 Benefits:
-- **consistency**: ensure uniform API error responses across all Laravel projects, adhering to a widely used standard
+- **consistency**: ensure uniform API error responses across all Laravel apps, adhering to a widely used standard
 - **automation**: handle Laravel-specific and common HTTP exceptions automatically
 - **simplicity**: focus solely on error responses without the need to implement the full JSON:API spec
 - **zero configuration**: install the package with no additional configuration required
