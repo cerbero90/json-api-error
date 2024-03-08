@@ -1,2 +1,0 @@
-providers:
-  - Cerbero\JsonApiError\Providers\JsonApiErrorServiceProvider

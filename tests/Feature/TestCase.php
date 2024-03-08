@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cerbero\JsonApiError\Feature;
 
 use Cerbero\JsonApiError\JsonApiError;
+use Cerbero\JsonApiError\Providers\JsonApiErrorServiceProvider;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -14,13 +15,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Support\Exceptions\MathException;
 use Illuminate\Validation\UnauthorizedException;
-use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
-    use WithWorkbench;
-
     /**
      * @param \Illuminate\Routing\Router $router
      */
@@ -37,5 +35,16 @@ abstract class TestCase extends OrchestraTestCase
         $router->get('math', fn () => throw new MathException());
         $router->get('status', fn () => throw new LockTimeoutException());
         $router->get('previous', fn () => throw new Exception('current', 0, new Exception('previous')));
+    }
+
+    /**
+     * @param \Illuminate\Foundation\Application $app
+     * @return array<int, class-string>
+     */
+    protected function getPackageProviders($app)
+    {
+        return [
+            JsonApiErrorServiceProvider::class,
+        ];
     }
 }
