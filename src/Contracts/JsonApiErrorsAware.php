@@ -7,12 +7,12 @@ namespace Cerbero\JsonApiError\Contracts;
 use Cerbero\JsonApiError\Data\JsonApiErrorData;
 
 /**
- * The interface to provide JSON:API errors
+ * The interface to provide JSON:API errors.
  */
 interface JsonApiErrorsAware
 {
     /**
-     * Retrieve all the occurred JSON:API errors
+     * Retrieve all the occurred JSON:API errors.
      *
      * @return JsonApiErrorData[]
      */

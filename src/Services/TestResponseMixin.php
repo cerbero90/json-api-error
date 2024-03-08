@@ -11,7 +11,7 @@ use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * The mixin to test JSON:API error responses
+ * The mixin to test JSON:API error responses.
  */
 final class TestResponseMixin
 {
@@ -47,7 +47,7 @@ final class TestResponseMixin
              */
             $this
                 ->assertJsonApiErrorStructure()
-                ->assertJsonPath('errors', fn (array $errors) => collect($errors)->every(function (array $error) {
+                ->assertJsonPath('errors', fn(array $errors) => collect($errors)->every(function (array $error) {
                     return $error['status'] === '422' && $error['title'] === __('json-api-error::statuses.422.title');
                 }));
 
@@ -59,7 +59,7 @@ final class TestResponseMixin
 
             foreach ($expected as $dot => $detail) {
                 $pointer = (new Dot($dot))->toJsonPointer();
-                $message = "The field [$dot] does not have the error [$detail].";
+                $message = "The field [{$dot}] does not have the error [{$detail}].";
 
                 Assert::assertSame($detail, $actual[$pointer] ?? null, $message);
 

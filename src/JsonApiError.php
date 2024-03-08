@@ -20,12 +20,12 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 /**
- * The entry-point to render JSON:API compliant errors
+ * The entry-point to render JSON:API compliant errors.
  */
 final class JsonApiError
 {
     /**
-     * The map between throwables and handlers
+     * The map between throwables and handlers.
      *
      * @var array<class-string, callable>
      */
@@ -36,7 +36,7 @@ final class JsonApiError
     ];
 
     /**
-     * The map between throwables and HTTP statuses
+     * The map between throwables and HTTP statuses.
      *
      * @var array<class-string, int>
      */
@@ -48,21 +48,33 @@ final class JsonApiError
     ];
 
     /**
-     * The user-defined data to merge with all JSON:API errors
+     * The user-defined data to merge with all JSON:API errors.
      *
      * @var ?Closure(): JsonApiErrorData
      */
     private static ?Closure $merge = null;
 
     /**
-     * The JSON:API errors
+     * The JSON:API errors.
      *
      * @var JsonApiErrorData[] $errors
      */
     public readonly array $errors;
 
     /**
-     * Define a custom handler to turn the given throwable into a JSON:API error
+     * Instantiate the class.
+     */
+    public function __construct(JsonApiErrorData ...$errors)
+    {
+        throw_if(empty($errors), NoErrorsException::class);
+
+        $this->errors = self::$merge === null ? $errors : array_map(function (JsonApiErrorData $error) {
+            return $error->merge((self::$merge)());
+        }, $errors);
+    }
+
+    /**
+     * Define a custom handler to turn the given throwable into a JSON:API error.
      *
      * @param Closure(Throwable): JsonApiErrorData|JsonApiErrorData[] $handler
      */
@@ -74,12 +86,12 @@ final class JsonApiError
         foreach ($types as $type) {
             throw_unless(is_subclass_of($type, Throwable::class), InvalidHandlerException::class);
 
-            self::$handlersMap[$type] = fn (Throwable $e) => new self(...Arr::wrap($handler($e)));
+            self::$handlersMap[$type] = fn(Throwable $e) => new self(...Arr::wrap($handler($e)));
         }
     }
 
     /**
-     * Map the given throwable to the provided HTTP status
+     * Map the given throwable to the provided HTTP status.
      */
     public static function mapToStatus(string $throwable, int $status): void
     {
@@ -87,7 +99,7 @@ final class JsonApiError
     }
 
     /**
-     * Define custom data to merge with all JSON:API errors
+     * Define custom data to merge with all JSON:API errors.
      *
      * @var Closure(): JsonApiErrorData
      */
@@ -109,7 +121,7 @@ final class JsonApiError
      */
     public static function from(Throwable $e): self
     {
-        $handler = Arr::first(self::$handlersMap, fn (callable $h, string $class) => is_a($e, $class));
+        $handler = Arr::first(self::$handlersMap, fn(callable $h, string $class) => is_a($e, $class));
 
         return match (true) {
             $handler !== null => $handler($e),
@@ -164,18 +176,6 @@ final class JsonApiError
     public static function fromHttpException(HttpExceptionInterface $e): self
     {
         return self::fromStatus($e->getStatusCode());
-    }
-
-    /**
-     * Instantiate the class.
-     */
-    public function __construct(JsonApiErrorData ...$errors)
-    {
-        throw_if(empty($errors), NoErrorsException::class);
-
-        $this->errors = self::$merge === null ? $errors : array_map(function (JsonApiErrorData $error) {
-            return $error->merge((self::$merge)());
-        }, $errors);
     }
 
     /**

@@ -10,10 +10,25 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
- * The JSON:API error data
+ * The JSON:API error data.
  */
 final class JsonApiErrorData implements Arrayable
 {
+    /**
+     * Instantiate the class.
+     *
+     * @param array<string, mixed> $meta
+     */
+    public function __construct(
+        public readonly ?string $detail = null,
+        public readonly int $status = Response::HTTP_BAD_REQUEST,
+        public readonly ?string $code = null,
+        public readonly ?string $title = null,
+        public readonly mixed $id = null,
+        public readonly ?string $source = null,
+        public readonly array $meta = [],
+    ) {}
+
     /**
      * Instantiate the class from the given unexpected throwable.
      */
@@ -36,22 +51,6 @@ final class JsonApiErrorData implements Arrayable
     }
 
     /**
-     * Instantiate the class.
-     *
-     * @param array<string, mixed> $meta
-     */
-    public function __construct(
-        public readonly ?string $detail = null,
-        public readonly int $status = Response::HTTP_BAD_REQUEST,
-        public readonly ?string $code = null,
-        public readonly ?string $title = null,
-        public readonly mixed $id = null,
-        public readonly ?string $source = null,
-        public readonly array $meta = [],
-    ) {
-    }
-
-    /**
      * Retrieve the error as an array.
      *
      * @return array<string, mixed>
@@ -70,7 +69,7 @@ final class JsonApiErrorData implements Arrayable
     }
 
     /**
-     * Merge the given JSON:API error
+     * Merge the given JSON:API error.
      */
     public function merge(JsonApiErrorData $data): self
     {

@@ -10,14 +10,12 @@ namespace Cerbero\JsonApiError\Data;
 final class Dot
 {
     /**
-     * Instantiate the class
+     * Instantiate the class.
      */
-    public function __construct(public readonly string $dot)
-    {
-    }
+    public function __construct(public readonly string $dot) {}
 
     /**
-     * Retrieve the dot converted into a JSON pointer
+     * Retrieve the dot converted into a JSON pointer.
      */
     public function toJsonPointer(): string
     {
