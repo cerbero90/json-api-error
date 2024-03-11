@@ -41,7 +41,7 @@ Laravel package to standardize API error responses in compliance with the [JSON:
 - **automation**: handle Laravel-specific and common HTTP exceptions automatically
 - **simplicity**: focus solely on error responses without the need to implement the full JSON:API spec
 - **zero configuration**: install the package with no additional configuration required
-- **customization**: optionally register custom handlers, map throwables to HTTP statuses, or merge default data
+- **customization**: optionally register custom handlers, map errors to HTTP statuses or merge default data
 - **localization**: translate JSON:API errors into any language
 - **testability**: test error responses using the built-in testing tools
 - **debugging**: inspect the original message and trace when an unexpected error occurs
