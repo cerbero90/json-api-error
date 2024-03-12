@@ -13,12 +13,12 @@ it('handles JSON:API errors aware exceptions')
 
 it('handles validation exceptions')
     ->getJson('validation')
-    ->assertJsonApiValidationErrors([
+    ->assertJsonApiValidation([
         'The foo.0 field must be a string.',
         'The foo.1 field must be a string.',
         'The foo.2 field must be a string.',
     ])
-    ->assertJsonApiValidationErrors([
+    ->assertJsonApiValidation([
         'foo.0' => 'The foo.0 field must be a string.',
         'foo.1' => 'The foo.1 field must be a string.',
         'foo.2' => 'The foo.2 field must be a string.',

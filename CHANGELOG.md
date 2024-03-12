@@ -4,6 +4,12 @@ All notable changes to `json-api-error` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
+## 0.3.1 - 2024-03-12
+
+### Changed
+- Rename macro to `assertJsonApiValidation()`
+
+
 ## 0.3.0 - 2024-03-12
 
 ### Added
