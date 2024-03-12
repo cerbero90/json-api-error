@@ -39,7 +39,7 @@ final class TestResponseMixin
      *
      * @return Closure(array<string|int, string>): TestResponse
      */
-    public function assertJsonApiValidationErrors(): Closure
+    public function assertJsonApiValidation(): Closure
     {
         return function (array $expected) {
             /**
