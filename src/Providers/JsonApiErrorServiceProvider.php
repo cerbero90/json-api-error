@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cerbero\JsonApiError\Providers;
 
+use Cerbero\JsonApiError\Contracts\JsonApiErrorsAware;
+use Cerbero\JsonApiError\Contracts\JsonApiRenderable;
+use Cerbero\JsonApiError\Exceptions\JsonApiException;
 use Cerbero\JsonApiError\JsonApiError;
 use Cerbero\JsonApiError\Services\TestResponseMixin;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -36,6 +39,14 @@ final class JsonApiErrorServiceProvider extends ServiceProvider
     {
         $handler->renderable(function (Throwable $e, Request $request) {
             return $request->expectsJson() ? JsonApiError::from($e)->response() : null;
+        });
+
+        $handler->reportable(function (JsonApiException|JsonApiErrorsAware|JsonApiRenderable $e) use ($handler) {
+            if ($e instanceof Throwable && $previous = $e->getPrevious()) {
+                $handler->report($previous);
+            }
+
+            return false;
         });
 
         $this->loadTranslationsFrom(self::PATH_LANG, self::NAME);
