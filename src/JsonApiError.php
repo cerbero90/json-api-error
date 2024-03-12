@@ -78,7 +78,8 @@ final class JsonApiError
     /**
      * Define a custom handler to turn the given throwable into a JSON:API error.
      *
-     * @param Closure(Throwable): (JsonApiErrorData|JsonApiErrorData[]) $handler
+     * @template T of Throwable
+     * @param Closure(T): (JsonApiErrorData|JsonApiErrorData[]) $handler
      */
     public static function handle(Closure $handler): void
     {
