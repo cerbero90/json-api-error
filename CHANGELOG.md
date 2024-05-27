@@ -26,6 +26,12 @@ Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com/) princi
 - Nothing
 
 
+## 0.4.1 - 2024-05-27
+
+### Fixed
+- The `JsonApiError::handle()` parameter docblock
+
+
 ## 0.4.0 - 2024-05-27
 
 ### Added
