@@ -104,7 +104,8 @@ final class JsonApiError
     /**
      * Define a custom handler to turn the given throwable into a JSON:API error.
      *
-     * @param Closure(Throwable): (JsonApiErrorData|JsonApiErrorData[]) $handler
+     * @template T of Throwable
+     * @param Closure(T): (JsonApiErrorData|JsonApiErrorData[]) $handler
      */
     public static function handle(Closure $handler): void
     {
@@ -115,7 +116,10 @@ final class JsonApiError
         foreach ($types as $type) {
             throw_unless(is_subclass_of($type, Throwable::class), InvalidHandlerException::class);
 
-            self::$handlersMap[$type] = fn(Throwable $e) => new self(...Arr::wrap($handler($e)));
+            self::$handlersMap[$type] = function (Throwable $e) use ($handler) {
+                /** @var T $e */
+                return new self(...Arr::wrap($handler($e)));
+            };
         }
     }
 
