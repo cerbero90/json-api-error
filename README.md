@@ -59,6 +59,9 @@ composer require cerbero/json-api-error
 
 > [!NOTE]
 > Work in progress... 🏗️
+> - write documentation
+> - reach 100% code coverage
+> - tag stable version
 
 ## 📆 Change log
 
