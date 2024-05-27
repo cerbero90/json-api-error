@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cerbero\JsonApiError;
 
 use Cerbero\JsonApiError\Contracts\JsonApiErrorsAware;
-use Cerbero\JsonApiError\Contracts\JsonApiRenderable;
+use Cerbero\JsonApiError\Contracts\JsonApiSafe;
 use Cerbero\JsonApiError\Data\JsonApiErrorData;
 use Cerbero\JsonApiError\Exceptions\InvalidHandlerException;
 use Cerbero\JsonApiError\Exceptions\JsonApiException;
@@ -32,7 +32,7 @@ final class JsonApiError
      */
     private static array $handlersMap = [
         \Cerbero\JsonApiError\Contracts\JsonApiErrorsAware::class => [self::class, 'fromJsonApiErrorsAware'],
-        \Cerbero\JsonApiError\Contracts\JsonApiRenderable::class => [self::class, 'fromJsonApiRenderable'],
+        \Cerbero\JsonApiError\Contracts\JsonApiSafe::class => [self::class, 'fromJsonApiSafe'],
         \Illuminate\Validation\ValidationException::class => [self::class, 'fromValidation'],
         \Symfony\Component\HttpKernel\Exception\HttpException::class => [self::class, 'fromHttpException'],
     ];
@@ -164,7 +164,7 @@ final class JsonApiError
     /**
      * Instantiate the class from the given JSON:API renderable.
      */
-    public static function fromJsonApiRenderable(JsonApiRenderable $e): self
+    public static function fromJsonApiSafe(JsonApiSafe $e): self
     {
         return new self(new JsonApiErrorData($e->getMessage()));
     }
