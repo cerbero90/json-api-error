@@ -55,7 +55,7 @@ final class JsonApiError
      *
      * @var ?Closure(Request): bool
      */
-    private static ?Closure $shouldHandleRequest = null;
+    private static ?Closure $handleRequestIf = null;
 
     /**
      * The user-defined data to merge with all JSON:API errors.
@@ -88,9 +88,9 @@ final class JsonApiError
      *
      * @param Closure(Request): bool $callback
      */
-    public static function shouldHandleRequest(Closure $callback): void
+    public static function handleRequestIf(Closure $callback): void
     {
-        self::$shouldHandleRequest = $callback;
+        self::$handleRequestIf = $callback;
     }
 
     /**
@@ -98,11 +98,11 @@ final class JsonApiError
      */
     public static function handlesRequest(Request $request): bool
     {
-        return self::$shouldHandleRequest ? (self::$shouldHandleRequest)($request) : $request->expectsJson();
+        return self::$handleRequestIf ? (self::$handleRequestIf)($request) : $request->expectsJson();
     }
 
     /**
-     * Define a custom handler to turn the given throwable into a JSON:API error.
+     * Define a custom handler to turn the given throwable into JSON:API error(s).
      *
      * @template T of Throwable
      * @param Closure(T): (JsonApiErrorData|JsonApiErrorData[]) $handler
