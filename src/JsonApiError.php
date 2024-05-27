@@ -12,6 +12,7 @@ use Cerbero\JsonApiError\Exceptions\JsonApiException;
 use Cerbero\JsonApiError\Exceptions\NoErrorsException;
 use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Reflector;
 use Illuminate\Validation\ValidationException;
@@ -50,6 +51,13 @@ final class JsonApiError
     ];
 
     /**
+     * The user-defined logic to determine whether the current request should be handled.
+     *
+     * @var ?Closure(Request): bool
+     */
+    private static ?Closure $shouldHandleRequest = null;
+
+    /**
      * The user-defined data to merge with all JSON:API errors.
      *
      * @var ?Closure(): JsonApiErrorData
@@ -76,16 +84,33 @@ final class JsonApiError
     }
 
     /**
+     * Define a custom logic to determine whether the given request should be handled.
+     *
+     * @param Closure(Request): bool $callback
+     */
+    public static function shouldHandleRequest(Closure $callback): void
+    {
+        self::$shouldHandleRequest = $callback;
+    }
+
+    /**
+     * Determine whether the given request should be handled.
+     */
+    public static function handlesRequest(Request $request): bool
+    {
+        return self::$shouldHandleRequest ? (self::$shouldHandleRequest)($request) : $request->expectsJson();
+    }
+
+    /**
      * Define a custom handler to turn the given throwable into a JSON:API error.
      *
-     * @template T of Throwable
-     * @param Closure(T): (JsonApiErrorData|JsonApiErrorData[]) $handler
+     * @param Closure(Throwable): (JsonApiErrorData|JsonApiErrorData[]) $handler
      */
     public static function handle(Closure $handler): void
     {
         $parameters = (new ReflectionFunction($handler))->getParameters();
         /** @var class-string[] */
-        $types = empty($parameters) ? [null] : (Reflector::getParameterClassNames($parameters[0]) ?: [null]);
+        $types = empty($parameters) ? [''] : (Reflector::getParameterClassNames($parameters[0]) ?: ['']);
 
         foreach ($types as $type) {
             throw_unless(is_subclass_of($type, Throwable::class), InvalidHandlerException::class);
@@ -166,7 +191,7 @@ final class JsonApiError
      */
     public static function fromJsonApiSafe(JsonApiSafe $e): self
     {
-        return new self(new JsonApiErrorData($e->getMessage()));
+        return new self(new JsonApiErrorData($e->getMessage(), max($e->getCode(), Response::HTTP_BAD_REQUEST)));
     }
 
     /**

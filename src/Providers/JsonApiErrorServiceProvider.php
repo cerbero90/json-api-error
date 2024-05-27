@@ -10,6 +10,7 @@ use Cerbero\JsonApiError\Exceptions\JsonApiException;
 use Cerbero\JsonApiError\JsonApiError;
 use Cerbero\JsonApiError\Services\TestResponseMixin;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Testing\TestResponse;
@@ -37,11 +38,11 @@ final class JsonApiErrorServiceProvider extends ServiceProvider
      */
     public function boot(ExceptionHandler $handler): void
     {
-        $handler->renderable(function (Throwable $e, Request $request) {
-            return $request->expectsJson() ? JsonApiError::from($e)->response() : null;
+        $handler->renderable(function (Throwable $e, Request $request): ?JsonResponse {
+            return JsonApiError::handlesRequest($request) ? JsonApiError::from($e)->response() : null;
         });
 
-        $handler->reportable(function (JsonApiException|JsonApiErrorsAware|JsonApiSafe $e) use ($handler) {
+        $handler->reportable(function (JsonApiException|JsonApiErrorsAware|JsonApiSafe $e) use ($handler): bool {
             if ($e instanceof Throwable && $previous = $e->getPrevious()) {
                 $handler->report($previous);
             }
