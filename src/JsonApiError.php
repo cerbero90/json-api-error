@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Cerbero\JsonApiError;
 
 use Cerbero\JsonApiError\Contracts\JsonApiErrorsAware;
-use Cerbero\JsonApiError\Contracts\JsonApiRenderable;
+use Cerbero\JsonApiError\Contracts\JsonApiSafe;
 use Cerbero\JsonApiError\Data\JsonApiErrorData;
 use Cerbero\JsonApiError\Exceptions\InvalidHandlerException;
 use Cerbero\JsonApiError\Exceptions\JsonApiException;
 use Cerbero\JsonApiError\Exceptions\NoErrorsException;
 use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Reflector;
 use Illuminate\Validation\ValidationException;
@@ -32,7 +33,7 @@ final class JsonApiError
      */
     private static array $handlersMap = [
         \Cerbero\JsonApiError\Contracts\JsonApiErrorsAware::class => [self::class, 'fromJsonApiErrorsAware'],
-        \Cerbero\JsonApiError\Contracts\JsonApiRenderable::class => [self::class, 'fromJsonApiRenderable'],
+        \Cerbero\JsonApiError\Contracts\JsonApiSafe::class => [self::class, 'fromJsonApiSafe'],
         \Illuminate\Validation\ValidationException::class => [self::class, 'fromValidation'],
         \Symfony\Component\HttpKernel\Exception\HttpException::class => [self::class, 'fromHttpException'],
     ];
@@ -48,6 +49,13 @@ final class JsonApiError
         \Illuminate\Database\Eloquent\ModelNotFoundException::class => 404,
         \Illuminate\Validation\UnauthorizedException::class => 403,
     ];
+
+    /**
+     * The user-defined logic to determine whether the current request should be handled.
+     *
+     * @var ?Closure(Request): bool
+     */
+    private static ?Closure $shouldHandleRequest = null;
 
     /**
      * The user-defined data to merge with all JSON:API errors.
@@ -76,16 +84,33 @@ final class JsonApiError
     }
 
     /**
+     * Define a custom logic to determine whether the given request should be handled.
+     *
+     * @param Closure(Request): bool $callback
+     */
+    public static function shouldHandleRequest(Closure $callback): void
+    {
+        self::$shouldHandleRequest = $callback;
+    }
+
+    /**
+     * Determine whether the given request should be handled.
+     */
+    public static function handlesRequest(Request $request): bool
+    {
+        return self::$shouldHandleRequest ? (self::$shouldHandleRequest)($request) : $request->expectsJson();
+    }
+
+    /**
      * Define a custom handler to turn the given throwable into a JSON:API error.
      *
-     * @template T of Throwable
-     * @param Closure(T): (JsonApiErrorData|JsonApiErrorData[]) $handler
+     * @param Closure(Throwable): (JsonApiErrorData|JsonApiErrorData[]) $handler
      */
     public static function handle(Closure $handler): void
     {
         $parameters = (new ReflectionFunction($handler))->getParameters();
         /** @var class-string[] */
-        $types = empty($parameters) ? [null] : (Reflector::getParameterClassNames($parameters[0]) ?: [null]);
+        $types = empty($parameters) ? [''] : (Reflector::getParameterClassNames($parameters[0]) ?: ['']);
 
         foreach ($types as $type) {
             throw_unless(is_subclass_of($type, Throwable::class), InvalidHandlerException::class);
@@ -164,9 +189,9 @@ final class JsonApiError
     /**
      * Instantiate the class from the given JSON:API renderable.
      */
-    public static function fromJsonApiRenderable(JsonApiRenderable $e): self
+    public static function fromJsonApiSafe(JsonApiSafe $e): self
     {
-        return new self(new JsonApiErrorData($e->getMessage()));
+        return new self(new JsonApiErrorData($e->getMessage(), max($e->getCode(), Response::HTTP_BAD_REQUEST)));
     }
 
     /**
