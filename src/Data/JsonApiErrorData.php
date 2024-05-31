@@ -36,7 +36,7 @@ final class JsonApiErrorData implements Arrayable
      */
     public static function unexpected(Throwable $e): self
     {
-        return new self(meta: config('app.debug') ? [
+        return new self(status: Response::HTTP_INTERNAL_SERVER_ERROR, meta: config('app.debug') ? [
             'message' => $e->getMessage(),
             'trace' => $e->getTrace(),
             'previous_message' => $e->getPrevious()?->getMessage(),
