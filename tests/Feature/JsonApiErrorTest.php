@@ -140,7 +140,7 @@ it('shows debugging information', function () {
 
     $this
         ->getJson('previous')
-        ->assertJsonApiErrorStatus(400)
+        ->assertJsonApiErrorStatus(500)
         ->assertJsonPath('errors.0.meta.message', 'current')
         ->assertJsonPath('errors.0.meta.previous_message', 'previous');
 
