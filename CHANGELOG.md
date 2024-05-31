@@ -26,6 +26,12 @@ Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com/) princi
 - Nothing
 
 
+## 0.4.3 - 2024-05-31
+
+### Fixed
+- The HTTP status for Unexpected errors is now 500
+
+
 ## 0.4.2 - 2024-05-27
 
 ### Changed
