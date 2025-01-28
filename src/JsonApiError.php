@@ -10,10 +10,13 @@ use Cerbero\JsonApiError\Data\JsonApiErrorData;
 use Cerbero\JsonApiError\Exceptions\InvalidHandlerException;
 use Cerbero\JsonApiError\Exceptions\JsonApiException;
 use Cerbero\JsonApiError\Exceptions\NoErrorsException;
+use Cerbero\JsonApiError\Middleware\EnforceJsonRequest;
 use Closure;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Reflector;
 use Illuminate\Validation\ValidationException;
 use ReflectionFunction;
@@ -24,7 +27,7 @@ use Throwable;
 /**
  * The entry-point to render JSON:API compliant errors.
  */
-final class JsonApiError
+final class JsonApiError implements Responsable
 {
     /**
      * The map between throwables and handlers.
@@ -63,6 +66,13 @@ final class JsonApiError
      * @var ?Closure(): JsonApiErrorData
      */
     private static ?Closure $merge = null;
+
+    /**
+     * The middleware to ensure JSON requests.
+     *
+     * @var class-string
+     */
+    public static string $middleware = EnforceJsonRequest::class;
 
     /**
      * The JSON:API errors.
@@ -223,9 +233,23 @@ final class JsonApiError
     }
 
     /**
-     * Retrieve the HTTP response containing the JSON:API errors.
+     * Register a fallback route for missing JSON endpoints.
      */
-    public function response(): JsonResponse
+    public static function fallbackRoute(): void
+    {
+        $placeholder = 'fallbackPlaceholder';
+
+        Route::get("{{$placeholder}?}", fn() => self::fromStatus(Response::HTTP_NOT_FOUND))
+            ->where($placeholder, '.*')
+            ->fallback();
+    }
+
+    /**
+     * Retrieve the HTTP response containing the JSON:API errors.
+     *
+     * @param \Illuminate\Http\Request $request
+     */
+    public function toResponse($request): Response
     {
         return new JsonResponse($this->toArray(), $this->errors[0]->status);
     }
