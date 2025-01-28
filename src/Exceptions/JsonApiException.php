@@ -30,9 +30,11 @@ class JsonApiException extends Exception implements Responsable
 
     /**
      * Render the JSON:API errors.
+     *
+     * @param \Illuminate\Http\Request $request
      */
     public function toResponse($request): Response
     {
-        return (new JsonApiError(...$this->errors))->response();
+        return (new JsonApiError(...$this->errors))->toResponse($request);
     }
 }
