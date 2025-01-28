@@ -26,6 +26,17 @@ Updates should follow the [Keep a CHANGELOG](https://keepachangelog.com/) princi
 - Nothing
 
 
+## 0.5.0 - 2025-01-28
+
+### Added
+- Fallback route for missing endpoints
+- API routes enforce JSON requests by default
+
+### Changed
+- When debugging, exception messages are returned in the JSON response before traces
+- JsonApiError implements the Illuminate\Contracts\Support\Responsable contract
+
+
 ## 0.4.3 - 2024-05-31
 
 ### Fixed
