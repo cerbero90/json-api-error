@@ -38,8 +38,8 @@ final class JsonApiErrorData implements Arrayable
     {
         return new self(status: Response::HTTP_INTERNAL_SERVER_ERROR, meta: config('app.debug') ? [
             'message' => $e->getMessage(),
-            'trace' => $e->getTrace(),
             'previous_message' => $e->getPrevious()?->getMessage(),
+            'trace' => $e->getTrace(),
             'previous_trace' => $e->getPrevious()?->getTrace(),
         ] : []);
     }
